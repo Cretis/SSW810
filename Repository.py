@@ -12,27 +12,10 @@ class Repository:
         self.students = list()
         self.instructors = list()
         self.majors = list()
-        try:
-            self.readstudent(studentpath, True)
-        except IndexError as e:
-            print(e)
-        try:
-            self.readinstructor(instructorpath, True)
-        except IndexError as e:
-            print(e)
-
-        try:
-            self.readgrade(gradepath, True)
-        except IndexError as e:
-            print(e)
-        except KeyError as e2:
-            print(e2)
-        try:
-            self.readmajor(majorpath, True)
-        except IndexError as e:
-            print(e)
-        except ValueError as e2:
-            print(e2)
+        self.readstudent(studentpath, True)
+        self.readinstructor(instructorpath, True)
+        self.readgrade(gradepath, True)
+        self.readmajor(majorpath, True)
         print(self.summarystudent())
         print(self.summaryinstructor())
         print(self.summarymajor())
@@ -225,7 +208,11 @@ class Repository:
                         self.insertmajor(c)
 
     def instructor_table_db(self, db_path):
-        db = sqlite3.connect(db_path)
+        try:
+            db = sqlite3.connect(db_path)
+        except sqlite3.DatabaseError:
+            raise sqlite3.DatabaseError(f'can not find database {db_path}')
+
         pt = PrettyTable(field_names=['CWID', 'Name', 'Dept', 'Course', 'Students'])
         for row in db.execute(
                 "select * from instructor_summary"):
@@ -235,5 +222,14 @@ class Repository:
 
 
 if __name__ == '__main__':
-    r = Repository('students.txt', 'instructors.txt', 'grades.txt', 'majors.txt')
-    print(r.instructor_table_db('/Users/fst/database/SSW810'))
+    try:
+        r = Repository('students.txt', 'instructors.txt', 'grades.txt', 'majors.txt')
+        print(r.instructor_table_db('/Users/fst/database/SSW810'))
+    except IndexError as e:
+        print(e)
+    except ValueError as e2:
+        print(e2)
+    except KeyError as e3:
+        print(e3)
+    except sqlite3.DatabaseError as e4:
+        print(e4)

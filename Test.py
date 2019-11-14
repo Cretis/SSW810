@@ -1,6 +1,7 @@
 from Repository import Repository
 from prettytable import PrettyTable
 import unittest
+import sqlite3
 
 
 class TestRepository(unittest.TestCase):
@@ -18,6 +19,9 @@ class TestRepository(unittest.TestCase):
             r = Repository('students.txt', 'instructors.txt', 'grades.txt', 'none.txt')
         with self.assertRaises(IndexError):
             r = Repository('students.txt', 'instructors.txt', 'none.txt', 'majors.txt')
+        with self.assertRaises(sqlite3.DatabaseError):
+            r = Repository('students.txt', 'instructors.txt', 'grades.txt', 'majors.txt')
+            r.instructor_table_db('asdf;j')
 
     def test_Repository(self):
         """this function is test my read function of my class
@@ -60,7 +64,7 @@ class TestRepository(unittest.TestCase):
         pt1 = r.instructor_table_db('/Users/fst/database/SSW810')
         pt2 = PrettyTable(field_names=['CWID', 'Name', 'Dept', 'Course', 'Students'])
         pt2.add_row(['98763', 'Rowland, J', 'SFEN', 'SSW 810', '4'])
-        self.assertEqual(str(pt1[4]), str(pt2))
+        self.assertEqual(str(pt1[5]), str(pt2))
 
 
 if __name__ == '__main__':
