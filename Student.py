@@ -2,8 +2,8 @@ from collections import defaultdict
 
 
 class Student:
-    def __init__(self, cwid, name, major):
+    def __init__(self, cwid, name, dept):
         self.cwid = cwid
         self.name = name
         self.courses = defaultdict(str)
-        self.major = major
+        self.dept = dept
